@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.rawgit.com/Chalarangelo/mini.css/v3.0.1/dist/mini-default.min.css">
+</head>
+<body>
+    <h1>Промисы</h1>
+    <script>
+        function PromisePolyfill(fn) {
+            this.state = 'pending';
+            this.result = undefined;
+ 
+            let successCallback;
+ 
+            const resolve = (value) => {
+                this.state = 'fulfilled';
+                this.result = value;
+ 
+                successCallback(this.result);
+            };
+ 
+            this.then = (cb) => {
+                successCallback = cb;
+            };
+ 
+            fn(resolve);
+        }
+ 
+        const weather = document.querySelector('.weather');
+        const cities = ['Batumi', 'Tver', 'Klin', 'Kirovsk', 'Minsk'];
+        const weatherTypes = ['Rain', 'Clear', 'Snow', 'Fog', 'Clouds'];
+ 
+        const temperatureBorders = {
+            Batumi: [-5, 35],
+            Tver: [-20, 20],
+            Klin: [-20, 25],
+            Kirovsk: [-40, 15],
+            Minsk: [-40, 30],
+        };
+ 
+        function getRandomTimeout() {
+            return Math.round(Math.random() * 3000);
+        }
+ 
+        let userCity;
+ 
+        function getCity(possibleCities) {
+            if (userCity !== undefined) {
+                return Promise.resolve(userCity);
+            }
+ 
+            return new Promise(function(resolve, reject) {
+                setTimeout(() => {
+                    const cityIndex = Math.floor(Math.random() * possibleCities.length);
+ 
+                    userCity = possibleCities[cityIndex]
+                    resolve(userCity);
+                }, getRandomTimeout());
+            });
+        }
+ 
+        function getTemperature(location, tempBorders) {
+            return new Promise(function(resolve, reject) {
+                setTimeout(() => {
+                    const borders = tempBorders[location];
+                    const delta = borders[1] - borders[0];
+                    const temperature = Math.round(Math.random() * delta) + borders[0];
+ 
+                    resolve(temperature);
+                }, getRandomTimeout());
+            });
+        }
+ 
+        function getWeatherType(possibleWeather) {
+            return new Promise(function(resolve, reject) {
+                setTimeout(() => {
+                    const weatherIndex = Math.floor(Math.random() * possibleWeather.length);
+ 
+                    resolve(possibleWeather[weatherIndex]);
+                }, getRandomTimeout());
+            });
+        }
+ 
+        // getCity(cities)
+            // .then(city => {
+            //     return Promise.all([getTemperature(city, temperatureBorders), getWeatherType(weatherTypes)]);
+            // })
+            // .then(result => console.log('Температура ' + result[0] + ' Погода ' + result[1]));
+ 
+        async function app() {
+            const city = await getCity(cities);
+            const result = await Promise.all([getTemperature(city, temperatureBorders), getWeatherType(weatherTypes)]);
+ 
+            console.log('Температура ' + result[0] + ' Погода ' + result[1])
+        }
+ 
+        app();
+    </script>
+</body>
+</html>
+ 

@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Обещать не значит геолоцироваться</title>
+</head>
+<body>
+  <button class="geo-button">Где я?</button>
+  <script>
+    const geoButton = document.querySelector('.geo-button');
+
+    const geoPromise = new Promise(function(resolve, reject) {
+        geoButton.addEventListener('click', function() {
+        
+        let geolocation = navigator.geolocation;
+        geolocation.getCurrentPosition(function({ coords }) { 
+          resolve(coords);
+        })
+      })
+    })
+    geoPromise.then(result => {
+        console.log('Широта - ' + result.latitude);
+        console.log('Долгота - ' + result.longitude);
+       })
+        .catch(geoErr => console.error('Error: ', geoErr));   
+  </script>
+</body>
+</html>

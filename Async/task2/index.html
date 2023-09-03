@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Промистаймертет</title>
+</head>
+<body>
+  <div class="input-container">
+      <input class="input" placeholder="Введите число таймеров">
+      <button class="button">Старт</button>
+  </div>
+  <div class="get-container"></div>
+</body>
+<script>
+   function timer() {
+      return new Promise((resolve, reject) => {
+          let finalNumber = 0;
+          let timerId = setInterval(function() {
+              console.log(++finalNumber);
+          }, 100);
+          setTimeout(() => { 
+              clearInterval(timerId);
+            }, Math.floor(Math.random() * 10 * 1000));
+          });
+          resolve(finalNumber);
+          console.log(resolve);
+        }
+        const button = document.querySelector('.button');
+        button.addEventListener('click', function() {
+          let arrPromise = [];
+          const input = document.querySelector('.input');
+          for (let i = 0; i < input.value; i++) {
+            arrPromise.push(timer());
+          }
+        })
+</script>
+</html>
